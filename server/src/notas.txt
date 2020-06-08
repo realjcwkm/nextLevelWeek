@@ -1,0 +1,73 @@
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+/**
+ * metodos http:
+ * GET: buscar/listar uma informacao do backend
+ * POST: criar uma informacao no backend
+ * PUT: alterar uma informacao no backend
+ * DELETE: deletar uma informacao no backend
+ * 
+ * POST http://localhost:3333/users = criar um usuario
+ * GET http://localhost:3333/users = listar usuarios
+ * GET http://localhost:3333/users/5 = buscar dados do usuario com id 5
+ * 
+ * WEB: npm start
+ * SERVER: npm run dev
+ * npm run knex:migrate
+ * npm run knex:seed
+ */ 
+ /** 
+ * tipos de parametros:
+ * Query params: parametros nomeados enviados na rota apos o ? (filtros e paginacao)
+ * Route params: parametros utilizados para identificar recursos :id
+ * Request body: corpo da requisicao utilizado para criar ou alterar recursos
+ * Request params: parametros que vem na propria rota que identifica um recurso
+ * Query params: parametros que vem na propria rota que sao opcionais para filtros, paginacao
+ * Request body: parametros para criacao/atualizacao de informacoes
+ * 
+ * SELECT * FROM users WHERE name = 'Diego'
+ * knex('users').where('name', 'Diego').select('*')
+ *
+ */
+
+const users = [
+    "Diego",
+    "Cleiton",
+    "Robson",
+    "Daniel"
+];
+
+app.get('/users', (request, response) => {
+    const search = String(request.query.search);
+
+    const filteredUser = search ? users.filter(users => users.includes(search)) : users;
+
+    return response.json(filteredUser);
+});
+
+app.get('/users/:id', (request, response) => {
+    const id = Number(request.params.id);
+    const user = users[id];
+
+    return response.json(user);
+});
+
+app.post('/users', (request, response) => {
+    const data = request.body;
+
+    console.log(data);
+
+    const user = {
+        name: data.name,
+        email: data.email,
+    };
+
+    return response.json(user);
+});
+
+
+
+app.listen(3333);
